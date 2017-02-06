@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
-
-const SEARCH_API_KEY = 'AIzaSyDrnk1jnOJzxtdW9lHkOsqVTQ3CnHWC-Kw';
+const { SEARCH_API_KEY } = require('./keys');
 
 const format = place => Object.assign(place, {
     urls: (place.photos || []).map(p => p.getUrl && p.getUrl({'maxWidth': 350, 'maxHeight': 350})).filter(u => typeof u === 'string')
