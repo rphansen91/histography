@@ -60,7 +60,7 @@ const details = place =>
     })
     .then(content => {
         const referer = findReferer(content);
-        if (referer) return html('https://en.wikipedia.org' + referer);
+        if (referer) return html('https://en.wikipedia.org/' + referer);
         return content;
     })
     .then(content => {
