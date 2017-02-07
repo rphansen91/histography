@@ -4,7 +4,6 @@ const nearbyPlaces = require('./maps');
 const placeDetails = require('./detail');
 const test = require('./test');
 const results = require('./results');
-const locate = require('./locate');
 
 const sendJson = res => json => {
     res.writeHead(200, {
@@ -24,9 +23,6 @@ module.exports = (req, res) => {
     const send = sendJson(res);
     const error = sendError(res);
     const url = Url.parse(req.url, true);
-    
-    console.log(url);
-
     switch (url.pathname) {
         case '/':
         case '/place': 
@@ -36,10 +32,6 @@ module.exports = (req, res) => {
         case '/detail':
             return nearbyPlaces(url.query.lat, url.query.lng)
             .then(p => placeDetails(p))
-            .then(send)
-            .catch(err => error(err.message));
-        case '/coords':
-            return locate()
             .then(send)
             .catch(err => error(err.message));
         case '/test':
