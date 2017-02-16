@@ -4,7 +4,8 @@ const result = test => {
             <div class="passed">
                 <img src="${test.img}" />
                 <h1>${test.name}</h1>
-                <p>Details: ${test.detail}</p>
+                <p>Details: </p>
+                <pre>${test.detail}</pre>
             </div>
         `
     }

@@ -1,6 +1,6 @@
 const tests = require('./cities').slice(0,19);
 const nearbyPlaces = require('./maps');
-const placeDetails = require('./detail');
+const placeDetails = require('./wiki/detail');
 
 const runner = t => {
     return nearbyPlaces(t.latitude, t.longitude)
@@ -9,7 +9,7 @@ const runner = t => {
         passed: true,
         name: p.name,
         img: p.urls[0],
-        detail: Object.keys(p.details)
+        detail: JSON.stringify(p.details, null, 2)
     }))
     .catch(err => ({
         passed: false,

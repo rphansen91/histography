@@ -27,5 +27,18 @@ module.exports = (latitude, longitude) =>
         type: 'landmarks'
     }))
     .then(res => res.json())
-    .then(res => res.results[0])
+    .then(res => {
+        const pois = (res.results || [])
+        .slice(1)
+        .map(findPhotos)
+        .map(r => ({
+            place_id: r.place_id,
+            name: r.name,
+            urls: r.urls,
+            types: r.types
+        }));
+        const place = res.results[0];
+        place.pois = pois;
+        return place;
+    })
     .then(place => findPhotos(place || {}));
