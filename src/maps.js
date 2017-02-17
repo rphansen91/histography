@@ -28,8 +28,13 @@ module.exports = (latitude, longitude) =>
     }))
     .then(res => res.json())
     .then(res => {
-        const pois = (res.results || [])
-        .slice(1)
+        if (!res.results || res.results.length < 1) {
+            return { name: 'New York' }
+            return Promise.reject({ message: res.error_message });
+        }
+
+        const place = res.results[0];
+        place.pois = res.results.slice(1)
         .map(findPhotos)
         .map(r => ({
             place_id: r.place_id,
@@ -37,8 +42,7 @@ module.exports = (latitude, longitude) =>
             urls: r.urls,
             types: r.types
         }));
-        const place = res.results[0];
-        place.pois = pois;
+        
         return place;
     })
     .then(place => findPhotos(place || {}));
