@@ -1,11 +1,11 @@
+const { wrapper } = require('./routes');
+
 const result = test => {
     if (test.passed) {
         return `
             <div class="passed">
                 <img src="${test.img}" />
                 <h1>${test.name}</h1>
-                <p>Details: </p>
-                <pre>${test.detail}</pre>
             </div>
         `
     }
@@ -19,20 +19,15 @@ const result = test => {
     `
 }
 
-module.exports = res => results => {
-    res.writeHead(200, {"Content-Type": 'text/html'});
-    res.end(`
-        <html>
-            <head><title>Histography Results</title></head>
-            <style>
-                .passed {background-color: green;color:white;}
-                .failed {background-color: red;color:white;}
-            </style>
-            <body>
+const resultWrapper = wrapper({
+    title: 'Histogeo Results',
+    styles: `
+    <style>
+        .passed {background-color: green;color:white;}
+        .failed {background-color: red;color:white;}
+    </style>
+    `
+})
 
-                ${results.map(result).join('')}
-            
-            </body>
-        </html>
-    `)
-}
+module.exports = results =>
+    resultWrapper(results.map(result).join(''));

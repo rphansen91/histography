@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const isDate = require('./isDate');
 
 const html = url => fetch(url).then(res => res.text());
 
@@ -60,22 +61,25 @@ const details = place =>
     })
     .then(content => {
         const referer = findReferer(content);
-        if (referer) return html('https://en.wikipedia.org/' + referer);
+        if (referer) return html('https://en.wikipedia.org/wiki/' + referer);
         return content;
     })
     .then(content => {
-        var d = findDetail(content);
-        Object.keys(d).map(name => {
-            d[name] = {}
-            d[name].name = name;
-            d[name].html = find('id="'+name.replaceAll(' ', '_')+'"','<p>','<h2>')(content);
-            d[name].html = addWikiLinks(d[name].html);
-            d[name].urls = findImages(d[name].html);
-        });
-        return d;
+        return Object.keys(findDetail(content))
+        .map(name => {
+            var c = {}
+            var h = find('id="'+name.replaceAll(' ', '_')+'"','<p>','<h2>')(content);
+            if (!isDate(h)) return;
+            
+            c.name = name;
+            c.html = addWikiLinks(h);
+            c.urls = findImages(c.html);
+            return c;
+        })
+        .filter(c => c && c.html);
     })
     .then(d => {
-        place.details = d || {};
+        place.details = d || [];
         return place;
     });
 

@@ -14,11 +14,11 @@ const addLocation = (lng, lat) => {
 }
 
 const sanitizeDetails = details => 
-    Object.keys(details)
+    details
     .map(d => ({
-        name: details[d].name,
-        urls: details[d].urls,
-        text: sanitize([details[d].html])
+        name: d.name,
+        urls: d.urls,
+        text: sanitize([d.html])
                 .filter(naiveMatch)
                 .map(text => ({
                     text: text,

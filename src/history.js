@@ -18,7 +18,7 @@ const addPlace = (req) => new Promise((res, rej) =>
 
 const DISTANCE = 1000 / 6371;
 const placeQuery = (q) =>
-    PlaceHistory.findOne({
+    PlaceHistory.find({
         geo: {
             $near: [q.lng, q.lat],
             $maxDistance: q.distance || DISTANCE
