@@ -31,7 +31,7 @@ const error = res => err => {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept" 
     });
-    res.end(JSON.stringify(err));
+    res.end(JSON.stringify({ err }));
 }
 
 module.exports = {

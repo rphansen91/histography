@@ -10,6 +10,7 @@ const test = require('./test');
 const { index } = require('./routes');
 const results = require('./results');
 const responses = require('./utils/responses');
+const sendSupport = require('./email/support');
 const WHITELIST = ['127.0.0.1:8155','localhost:8081','histogeo.com'];
 
 const onWhitelist = host => 
@@ -61,6 +62,12 @@ module.exports = (req, res) => {
             .catch(err => error(err.message));
         case '/near':
             return findNear(url.query)
+            .then(send)
+            .catch(err => error(err.message));
+        case '/support':
+            return body(req)
+            .then(data => JSON.parse(data))
+            .then(body => sendSupport(req, body.from, body.text))
             .then(send)
             .catch(err => error(err.message));
         default: return error({ message: 'NOT_FOUND' });

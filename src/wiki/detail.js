@@ -27,6 +27,9 @@ String.prototype.all = function (match) {
     return results;
 }
 
+const findResult = find('mw-search-result-heading', '<a', '>');
+const findPageName = find('There is a page named ','href="','"');
+const findDidYouMean = find('Did you mean: ', 'href="', '"');
 const findReferer = find('may refer to:','/wiki/','"');
 const findImage = find('src', 'src="','"');
 const findDetail = content => {
@@ -49,22 +52,40 @@ const findImages = content => {
 }
 
 const addWikiLinks = content =>
-    (content || '').replaceAll('href="/wiki/', 'target=_blank href="https://en.wikipedia.org/wiki/');
+    (content || '').replaceAll('href="/wiki/', 'target="_blank" href="https://en.wikipedia.org/wiki/');
 
-const details = place =>
-    html('https://en.wikipedia.org/w/index.php?search=' + place.name.replaceAll(' ', '_'))
+const details = place => {
+    const name = (place.name+','+place.state).replaceAll(' ', '_');
+    const stats = { query: name }
+
+    return html('https://en.wikipedia.org/w/index.php?search=' + name)
     .then(content => {
-        if (content.indexOf('There is a page named ') !== -1) {
-            return html('https://en.wikipedia.org/wiki/' + place.name.replaceAll(' ', '_'))
+        const result = findResult(content);
+        if (result) {
+            stats.resultName = find('title','"','"')(result);
+            stats.resultUrl = find('href','"','"')(result);
+            return html('https://en.wikipedia.org' + stats.resultUrl);
         }
         return content;
     })
+    // .then(content => {
+    //     const pageName = findPageName(content);
+    //     if (pageName) {
+    //         stats.pageNameRedirect = pageName;
+    //         return html('https://en.wikipedia.org/' + pageName)
+    //     }
+    //     return content;
+    // })
+    // .then(content => {
+    //     const referer = findReferer(content);
+    //     if (referer) {
+    //         stats.refererNameRedirect = referer;
+    //         return html('https://en.wikipedia.org/wiki/' + referer);
+    //     }
+    //     return content;
+    // })
     .then(content => {
-        const referer = findReferer(content);
-        if (referer) return html('https://en.wikipedia.org/wiki/' + referer);
-        return content;
-    })
-    .then(content => {
+        if (content.length) stats.contentLength = content.length;
         return Object.keys(findDetail(content))
         .map(name => {
             var c = {}
@@ -79,8 +100,11 @@ const details = place =>
         .filter(c => c && c.html);
     })
     .then(d => {
+        stats.count = d ? d.length : 0;
+        place.stats = stats;
         place.details = d || [];
         return place;
     });
+}
 
 module.exports = details;
