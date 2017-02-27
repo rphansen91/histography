@@ -26,7 +26,7 @@ const zipped = res => doc => {
 
 const error = res => err => {
     console.log('ERROR',err);
-    res.writeHead(500, { 
+    res.writeHead(200, { 
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept" 
