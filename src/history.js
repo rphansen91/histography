@@ -1,4 +1,3 @@
-const connect = require('./db/connect');
 const PlaceHistory = require('./db/PlaceHistory');
 
 const createPlace = body => {

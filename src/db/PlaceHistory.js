@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var PlaceHistory = new Schema({
+  user: Schema.ObjectIds,
   title: String,
   content: String,
   category: String,
