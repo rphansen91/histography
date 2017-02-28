@@ -6,7 +6,7 @@ const geocoding = require('./maps');
 const placeDetails = require('./wiki/detail');
 const wikiSearch = require('./wiki/search');
 const poiSearch = require('./pois/pois');
-// const { addPlace, findNear } = require('./history');
+const { addPlace, findNear, find } = require('./history');
 const test = require('./test');
 const { index } = require('./routes');
 const results = require('./results');
@@ -59,14 +59,24 @@ module.exports = (req, res) => {
             .catch(err => error(err.message));
         case '/add':
             return body(req)
-            .then(data => ({
-                body: JSON.parse(data)
-            }))
+            .then(data => JSON.parse(data))
+            .then(data => {
+                if (!data.token) return { message: 'MUST_SUPPLY_TOKEN' }
+                return session.findOne(data.token)
+                .then(user => {
+                    data.userId = user._id;
+                    return data;
+                })
+            })
             .then(addPlace)
             .then(send)
             .catch(err => error(err.message));
         case '/near':
             return findNear(url.query)
+            .then(send)
+            .catch(err => error(err.message));
+        case '/history':
+            return find(url.query)
             .then(send)
             .catch(err => error(err.message));
         case '/support':

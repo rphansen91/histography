@@ -2,14 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var PlaceHistory = new Schema({
-  user: Schema.ObjectIds,
-  title: String,
+  user: { type: Schema.ObjectId, require: true },
+  title: { type: String, require: true },
   content: String,
   category: String,
   urls: [String],
+  date: Number,
   geo: {
     type: [Number],
-    index: '2dsphere'
+    index: '2dsphere',
+    required: true
   }
 });
 
